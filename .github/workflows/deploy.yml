@@ -2,7 +2,7 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: ['main'] # ou 'master' selon le nom de ta branche principale
+    branches: ['master'] # ou 'master' selon le nom de ta branche principale
 
 # Autorise le token GitHub à déployer sur GitHub Pages
 permissions:
