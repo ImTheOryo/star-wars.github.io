@@ -1,0 +1,30 @@
+import {Service} from "./Service.ts";
+
+export interface Species {
+    name: string;
+    classification?: string;
+    designation?: string;
+    average_height?: string;
+    skin_colors?: string;
+    hair_colors?: string;
+    eye_colors?: string;
+    average_lifespan: string;
+    homeworld: string;
+    language: string;
+    people?: Array<string>;
+    films?: Array<string>;
+    created?: string;
+    edited?: string;
+    url?: string;
+}
+
+export class SpeciesService extends Service<Species>{
+    constructor() {
+        const ressource: string = "species"
+        super(ressource);
+    }
+
+    async getAllSpecies (search: string = "", page: number = 1) {
+        return await this.getRessources(page, search);
+    }
+}
