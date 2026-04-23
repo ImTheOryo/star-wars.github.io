@@ -1,6 +1,11 @@
 import {Service} from "./Service.ts";
 
 
+interface PlanetResponse {
+    results: Planets[];
+    count: number;
+}
+
 export interface Planets {
     name: string;
     rotation_period?: string;
@@ -18,7 +23,7 @@ export interface Planets {
     url: string;
 }
 
-export class PlanetService extends Service<Planets>{
+export class PlanetService extends Service<PlanetResponse>{
     constructor() {
         const ressource: string = "planets";
         super(ressource);

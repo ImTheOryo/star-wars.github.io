@@ -30,9 +30,9 @@ export function SpeciesContextProvider({ children }: CharacterProviderProps) {
         do {
             const data = await service.getAllSpecies(query, page);
 
-            setSpecies((prev) => [...prev, ...data?.results]);
+            setSpecies((prev) => [...prev, ...(data?.results || [])]);
             setCount(data?.count ?? 0)
-            total = data.count ?? 0;
+            total = data?.count ?? 0;
             page += 1;
 
         } while (page <= Math.ceil(total / 10));

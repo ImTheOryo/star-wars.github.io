@@ -7,7 +7,7 @@ export class Service<T> {
         this.ressource = ressource;
     }
 
-    async getRessources(page: number = 1, search: string = ""): Promise<T[] | undefined> {
+    async getRessources(page: number = 1, search: string = ""): Promise<T | undefined> {
         try {
             const response = await fetch(`${this.apiUrl}?page=${page}&search=${search}`, {
                 method: 'GET',

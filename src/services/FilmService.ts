@@ -1,5 +1,10 @@
 import {Service} from "./Service.ts";
 
+interface FilmResponse {
+    results: Film[];
+    count: number;
+}
+
 export interface Film {
     title: string;
     episode_id: number;
@@ -17,7 +22,7 @@ export interface Film {
     url: string
 }
 
-export class FilmService extends Service<Film> {
+export class FilmService extends Service<FilmResponse> {
 
     constructor() {
         const ressource: string = "films"

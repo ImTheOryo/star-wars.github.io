@@ -1,5 +1,9 @@
 import {Service} from "./Service.ts";
 
+interface CharacterResponse {
+    results: Character[];
+    count: number;
+}
 
 export interface Character {
     name: string;
@@ -20,7 +24,7 @@ export interface Character {
     url: string;
 }
 
-export class CharacterService extends Service<Character>{
+export class CharacterService extends Service<CharacterResponse>{
     constructor() {
         const ressource: string = "people"
         super(ressource);

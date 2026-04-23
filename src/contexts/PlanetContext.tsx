@@ -33,9 +33,9 @@ export function PlanetContextProvider({ children }: PlanetProviderProps) {
         do {
             const data = await service.getAllPlanets(query, page);
 
-            setPlanets((prev) => [...prev, ...data?.results]);
+            setPlanets((prev) => [...prev, ...(data?.results || [])]);
             setCount(data?.count ?? 0)
-            total = data.count ?? 0;
+            total = data?.count ?? 0;
             page += 1;
 
         } while (page <= Math.ceil(total / 10));

@@ -5,10 +5,9 @@ import Pagination from "../../components/Pagination.tsx";
 import {useCharacters} from "../../contexts/CharacterContext.tsx";
 import {usePlanets} from "../../contexts/PlanetContext.tsx";
 import {useSpecies} from "../../contexts/SpecieContext.tsx";
-import {AutoSkeleton} from "auto-skeleton-react";
 
 function CharactersPage() {
-    const { characters, search, count, loading } = useCharacters();
+    const { characters, search, count } = useCharacters();
     const { planets } = usePlanets();
     const { species } = useSpecies();
     const [currentPage, setCurrentPage] = useState(1);
@@ -65,14 +64,12 @@ function CharactersPage() {
                             to={`/character/${character.name}`}
                             className="block"
                         >
-                            <AutoSkeleton loading={loading} name="character-card">
-                                <CharacterCard
-                                    name={character.name}
-                                    species={species.find(specie => character.species?.includes(specie.url || ""))?.name}
-                                    homeworld={planets.find(planet => planet.url == character.homeworld)?.name}
-                                    gender={character.gender}
-                                />
-                            </AutoSkeleton>
+                            <CharacterCard
+                                name={character.name}
+                                species={species.find(specie => character.species?.includes(specie.url || ""))?.name}
+                                homeworld={planets.find(planet => planet.url == character.homeworld)?.name}
+                                gender={character.gender}
+                            />
                         </Link>
                     ))}
                 </div>

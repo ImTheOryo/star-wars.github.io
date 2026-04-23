@@ -1,5 +1,10 @@
 import {Service} from "./Service.ts";
 
+interface SpecieResponse {
+    results: Species[];
+    count: number;
+}
+
 export interface Species {
     name: string;
     classification?: string;
@@ -18,7 +23,7 @@ export interface Species {
     url?: string;
 }
 
-export class SpeciesService extends Service<Species>{
+export class SpeciesService extends Service<SpecieResponse>{
     constructor() {
         const ressource: string = "species"
         super(ressource);
