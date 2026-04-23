@@ -4,6 +4,7 @@ import FilmsPage from "../pages/Films/Films.tsx";
 import CharactersPage from "../pages/Characters/Characters.tsx";
 import PlanetsPage from "../pages/Planets/Planets.tsx";
 import FilmDetailPage from "../pages/Film/Film.tsx";
+import CharacterDetailPage from "../pages/Character/Character.tsx";
 
 function Router() {
     return (
@@ -23,6 +24,10 @@ function Router() {
             <Route
                 path="/personnages"
                 element={<CharactersPage/>}
+            />
+            <Route
+                path={"/personnage/:personId"}
+                element={<CharacterDetailPage/>}
             />
             <Route
                 path="/planetes"

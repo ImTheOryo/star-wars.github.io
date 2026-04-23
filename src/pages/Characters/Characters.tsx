@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import CharacterCard from "../../components/CharacterCard.tsx";
+import CharacterCard from "../../components/Characters/CharacterCard.tsx";
 import {useEffect, useState} from "react";
 import Pagination from "../../components/Pagination.tsx";
 import {useCharacters} from "../../contexts/CharacterContext.tsx";
@@ -22,6 +22,12 @@ function CharactersPage() {
     useEffect(() => {
         setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
     }, [count]);
+
+    const paginatedCharacters = characters.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
+
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -58,10 +64,10 @@ function CharactersPage() {
             {/* Grid */}
             <div className="max-w-7xl mx-auto px-6 py-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {characters.map((character) => (
+                    {paginatedCharacters.map((character) => (
                         <Link
                             key={character.url}
-                            to={`/character/${character.name}`}
+                            to={`/personnage/${character.url.split("/").reverse()[1]}`}
                             className="block"
                         >
                             <CharacterCard

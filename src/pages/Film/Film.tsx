@@ -1,6 +1,20 @@
-import {useLocation} from "react-router";
+import {Link, useParams} from "react-router";
 import {useFetch} from "../../hooks/useFetch.ts";
 import type {Film} from "../../services/FilmService.ts";
+
+import StatBlock from "../../components/Film/StatBlock.tsx";
+import CountBadge from "../../components/Film/CountBadge.tsx";
+import {usePlanets} from "../../contexts/PlanetContext.tsx";
+import {useSpecies} from "../../contexts/SpecieContext.tsx";
+import {useStarship} from "../../contexts/StarshipContext.tsx";
+import {useVehicle} from "../../contexts/VehicleContext.tsx";
+import {useCharacters} from "../../contexts/CharacterContext.tsx";
+import type {Planets} from "../../services/PlanetService.ts";
+import type {Species} from "../../services/SpeciesService.ts";
+import type {Starship} from "../../services/StarshipService.ts";
+import type {Vehicle} from "../../services/VehicleService.ts";
+import type {Character} from "../../services/CharacterService.ts";
+import {FaRegShareFromSquare} from "react-icons/fa6";
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
 
@@ -16,38 +30,15 @@ const EPISODE_SUBTITLES: Record<number, string> = {
     9: "L'Ascension de Skywalker",
 };
 
-function StatBlock({ label, value }: { label: string; value: string | number }) {
-    return (
-        <div className="relative border border-yellow-500/20 p-4 bg-black/40 overflow-hidden group">
-            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-yellow-500/60" />
-            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-yellow-500/60" />
-            <p className="text-[9px] font-mono text-yellow-700 tracking-[0.4em] uppercase mb-1">{label}</p>
-            <p className="text-white font-bold text-sm uppercase tracking-wide group-hover:text-yellow-200 transition-colors duration-300">
-                {value}
-            </p>
-        </div>
-    );
-}
-
-function CountBadge({ label, count }: { label: string; count: number }) {
-    return (
-        <div className="flex items-center justify-between border-b border-yellow-500/10 py-3 group">
-            <div className="flex items-center gap-3">
-                <div className="w-1 h-4 bg-yellow-500/40 group-hover:bg-yellow-500 transition-colors duration-300" />
-                <span className="text-[11px] font-mono text-gray-400 uppercase tracking-[0.3em]">{label}</span>
-            </div>
-            <div className="flex items-center gap-2">
-                <div className="h-px w-8 bg-yellow-500/20" />
-                <span className="text-yellow-400 font-black text-sm font-mono">{String(count).padStart(2, "0")}</span>
-            </div>
-        </div>
-    );
-}
-
 function FilmDetailPage (){
-    const location = useLocation();
-    const path = location.pathname.split("/film/")[1];
-    const {data, isLoading} = useFetch<Film>(`https://swapi.dev/api/films/${path}`);
+    const {filmId} = useParams();
+    const {data, isLoading} = useFetch<Film>(`https://swapi.dev/api/films/${filmId}`);
+    const {characters} = useCharacters();
+    const {planets} = usePlanets();
+    const {species} = useSpecies();
+    const {starships} = useStarship();
+    const {vehicles} = useVehicle();
+
 
     const roman = data ? (ROMAN[data?.episode_id] ?? data?.episode_id) : "";
     const subtitle = data ? (EPISODE_SUBTITLES[data?.episode_id] ?? "") : "";
@@ -119,12 +110,12 @@ function FilmDetailPage (){
                     )}
 
                     {/* Key stats row */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
+                    <article className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
                         <StatBlock label="Réalisateur" value={data?.director} />
                         <StatBlock label="Producteur" value={data?.producer.split(",")[0].trim()} />
                         <StatBlock label="Sortie" value={data?.release_date} />
                         <StatBlock label="Épisode" value={roman.toString()} />
-                    </div>
+                    </article>
                 </div>
             </div>
 
@@ -179,11 +170,79 @@ function FilmDetailPage (){
                         </div>
 
                         <div className="bg-black/40 border border-yellow-500/20 px-4 py-2">
-                            <CountBadge label="Personnages" count={data?.characters.length} />
-                            <CountBadge label="Planètes" count={data?.planets.length} />
-                            <CountBadge label="Vaisseaux" count={data?.starships.length} />
-                            <CountBadge label="Véhicules" count={data?.vehicles.length} />
-                            <CountBadge label="Espèces" count={data?.species.length} />
+                            <CountBadge <Character>
+                                label="Personnages"
+                                count={data?.characters.length}
+                                elements={characters.filter((character) => data?.characters.includes(character.url))}
+                                renderItem={(c) => (
+                                    <Link
+                                        to={`/personnage/${c.url.split("/").reverse()[1]}`}
+                                        className="flex justify-between group items-center"
+                                    >
+                                        <span>{c.name}</span>
+                                        <FaRegShareFromSquare className="opacity-0 group-hover:opacity-100 text-yellow-400"/>
+                                    </Link>
+                                )}
+                            />
+
+                            <CountBadge <Planets>
+                                label="Planètes"
+                                count={data?.planets.length}
+                                elements={planets.filter((planet) => data?.planets.includes(planet.url))}
+                                renderItem={(p) => (
+                                    <Link to={"/"}
+                                        className="flex justify-between group items-center"
+                                    >
+                                        <span>{p.name}</span>
+                                        <FaRegShareFromSquare className="opacity-0 group-hover:opacity-100 text-yellow-400"/>
+                                    </Link>
+                                )}
+                            />
+
+                            <CountBadge <Starship>
+                                label="Vaisseaux"
+                                count={data?.starships.length}
+                                elements={starships.filter((starship) => data?.starships.includes(starship.url))}
+                                renderItem={(s) => (
+                                    <Link
+                                        to={"/"}
+                                        className="flex justify-between group items-center"
+                                    >
+                                        <span>{s.name}</span>
+                                        <FaRegShareFromSquare className="opacity-0 group-hover:opacity-100 text-yellow-400"/>
+                                    </Link>
+                                )}
+                            />
+
+                            <CountBadge <Vehicle>
+                                label="Véhicules"
+                                count={data?.vehicles.length}
+                                elements={vehicles.filter((vehicle) => data?.vehicles.includes(vehicle.url))}
+                                renderItem={(v) => (
+                                    <Link
+                                        to={"/"}
+                                        className="flex justify-between group items-center"
+                                    >
+                                        <span>{v.name}</span>
+                                        <FaRegShareFromSquare className="opacity-0 group-hover:opacity-100 text-yellow-400"/>
+                                    </Link>
+                                )}
+                            />
+
+                            <CountBadge <Species>
+                                label="Espèces"
+                                count={data?.species.length}
+                                elements={species.filter((specie) => data?.species.includes(specie.url))}
+                                renderItem={(s) => (
+                                    <Link
+                                        to={"/"}
+                                        className="flex justify-between group items-center"
+                                    >
+                                        <span>{s.name}</span>
+                                        <FaRegShareFromSquare className="opacity-0 group-hover:opacity-100 text-yellow-400"/>
+                                    </Link>
+                                )}
+                            />
                         </div>
                     </div>
 

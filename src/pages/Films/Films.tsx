@@ -1,4 +1,4 @@
-import FilmCard from "../../components/FilmCard.tsx";
+import FilmCard from "../../components/Films/FilmCard.tsx";
 import {useCallback, useEffect, useState} from "react";
 import {Link} from "react-router";
 

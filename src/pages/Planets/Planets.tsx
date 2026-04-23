@@ -1,43 +1,26 @@
 import { Link } from "react-router";
-import PlanetCard from "../../components/PlanetCard.tsx";
-import { useCallback, useEffect, useState } from "react";
+import PlanetCard from "../../components/Planets/PlanetCard.tsx";
+import { useEffect, useState } from "react";
 import Pagination from "../../components/Pagination.tsx";
+import {usePlanets} from "../../contexts/PlanetContext.tsx";
 
-interface Planet {
-    name: string;
-    climate: string;
-    terrain: string;
-    population: string;
-    url: string;
-}
+
 
 function PlanetsPage() {
-    const [allPlanets, setAllPlanets] = useState<Planet[]>([]);
-    const [count, setCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [search, setSearch] = useState("");
+    const { planets, search, count } = usePlanets();
 
     const ITEMS_PER_PAGE = 10;
 
-    const fetchAllPlanets = useCallback(async () => {
-        try {
-            const response = await fetch(`https://swapi.dev/api/planets?page=${currentPage}&search=${search}`);
-            if (response.ok) {
-                const data = await response.json();
-                setAllPlanets(data.results);
-                setCount(data.count);
-                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-            }
-        } catch (error) {
-            console.error("Fetch error:", error);
-        }
-    }, [currentPage, search]);
-
     useEffect(() => {
-        fetchAllPlanets();
-    }, [fetchAllPlanets]);
+        setTotalPages(Math.ceil(count / ITEMS_PER_PAGE))
+    }, [count]);
 
+    const paginatedPlanets = planets.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -78,7 +61,7 @@ function PlanetsPage() {
                         <input
                             type="text"
                             placeholder="Rechercher une planète"
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => search(e.target.value)}
                             className="w-full bg-transparent border-b border-yellow-500/30 focus:border-yellow-500
                             text-white placeholder-gray-600
                             font-mono text-[13px] tracking-wider
@@ -93,7 +76,7 @@ function PlanetsPage() {
             {/* Grid */}
             <div className="max-w-7xl mx-auto px-6 py-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {allPlanets.map((planet) => (
+                    {paginatedPlanets.map((planet) => (
                         <Link
                             key={planet.url}
                             to={`/planets/${planet.name}`}

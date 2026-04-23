@@ -24,11 +24,22 @@ export function CharacterContextProvider({ children }: CharacterProviderProps) {
 
     const search = async (query: string, page: number = 1) => {
         setLoading(true);
-        const data = await service.getAllCharacters(query, page);
-        setCharacters(data?.results ?? []);
-        setCount(data?.count ?? 0);
+
+        let total = 0
+
+        do {
+            const data = await service.getAllCharacters(query, page);
+
+            setCharacters((prev) => [...prev, ...(data?.results || [])]);
+            setCount(data?.count ?? 0)
+            total = data?.count ?? 0;
+            page += 1;
+
+        } while (page <= Math.ceil(total / 10));
+
+
         setLoading(false);
-    };
+    }
 
     useEffect(() => { search("", 1); }, []);
 
