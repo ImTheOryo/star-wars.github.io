@@ -1,0 +1,51 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ['main'] # ou 'master' selon le nom de ta branche principale
+
+# Autorise le token GitHub à déployer sur GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permet d'annuler les déploiements en cours si tu push plusieurs fois d'affilée
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 25.9.0
+          cache: 'npm' # Change pour 'yarn' ou 'pnpm' si besoin
+
+      - name: Install dependencies
+        run: npm ci # Change pour 'yarn install' ou 'pnpm install'
+
+      - name: Build
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # C'est le dossier généré par Vite
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
